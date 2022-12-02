@@ -18,12 +18,15 @@ def setup(request):
     browser_name = request.config.getoption("--browser_name")
 
     if browser_name == "firefox":
+
         service_obj = Service("C:\\tools\\selenium\\geckodriver.exe")
         driver = webdriver.Firefox(service=service_obj)
-
     if browser_name == "chrome":
+        # makes sure that browser stays open after text execution is finished.
+        options = webdriver.ChromeOptions()
+        options.add_experimental_option("detach", True)
         service_obj = Service("C:\\tools\\selenium\\chromedriver.exe")
-        driver = webdriver.Chrome(service=service_obj)
+        driver = webdriver.Chrome(options=options, service=service_obj)
 
     driver.implicitly_wait(15)
 
@@ -32,11 +35,12 @@ def setup(request):
     request.cls.driver = driver
 
     yield
+    
     sleep(15)
     driver.close()
 
 
-@pytest.fixture(params=getData.get_data("standard_user"))
+@pytest.fixture(params=getData.get_data())
 def data_load(request):
     print(request.param)
     return request.param

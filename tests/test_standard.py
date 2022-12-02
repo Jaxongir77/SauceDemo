@@ -1,22 +1,29 @@
-from pageObjects.cartPage import cartPage
-from pageObjects.checkOutInfo import CheckOut
-from pageObjects.checkOutOverview import checkOver
-from pageObjects.loginPage import loginPage
-from pageObjects.productPage import productPage
+import pytest
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
+
+from pageObject.cartPage import cartPage
+from pageObject.checkOutInfo import CheckOut
+from pageObject.checkOutOverview import checkOver
+from pageObject.loginPage import loginPage
+from pageObject.productPage import productPage
 from tests.conftest import data_load
 from utilities.BaseClass import BaseClass
 from selenium.webdriver.support.select import Select
 
 
+@pytest.mark.ui
 class TestStandard(BaseClass):
-    def test_standard(self,data_load):
-
+    def test_standard(self, data_load):
         loginP = loginPage(self.driver)
+
+        wait = WebDriverWait(self.driver, 10)
 
         loginP.get_user().send_keys(data_load["username"])
 
         loginP.get_pass().send_keys(data_load["password"])
 
+        wait.until(expected_conditions.element_to_be_clickable(loginP.login()))
         loginP.login().click()
 
         product = productPage(self.driver)
@@ -55,10 +62,3 @@ class TestStandard(BaseClass):
         product.get_menu().click()
 
         product.get_logout().click()
-
-
-
-
-
-
-
